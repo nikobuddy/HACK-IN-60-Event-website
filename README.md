@@ -35,7 +35,17 @@ Marketing and registration landing page for **HACK_IN_60** (*Where Ideas Turn In
 - Update `index.html` meta and favicon (`/vite.svg`) when branding is final.
 - Users who prefer reduced motion get a shortened intro (see `IntroSequence.tsx`).
 
+## Deploying to Vercel
+
+This app is a **Vite + React SPA** with `BrowserRouter`. The repo includes [`vercel.json`](vercel.json) so that:
+
+- Vercel uses the **Vite** preset with `npm run build` and output directory **`dist`**.
+- **Client-side routes** (for example refreshing on a path other than `/`) receive `index.html` instead of a platform 404, so React Router and your UI load correctly.
+
+**Steps:** import the Git repo in [Vercel](https://vercel.com/new), accept the detected settings (or set **Build Command** to `npm run build` and **Output Directory** to `dist`), then deploy. No environment variables are required for the static marketing site.
+
+If the dashboard does not detect Vite, set **Framework Preset** to Vite or **Other** with the build/output values above.
+
 ## ESLint (optional hardening)
 
 The repo ships with a baseline TypeScript + React Hooks ESLint setup. For stricter, type-aware rules, follow the [typescript-eslint typed linting](https://typescript-eslint.io/getting-started/typed-linting) guide and extend your `.eslintrc.cjs` accordingly.
-# HACK-IN-60-Event-website
