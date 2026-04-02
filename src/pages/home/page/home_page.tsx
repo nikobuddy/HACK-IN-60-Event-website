@@ -5,7 +5,13 @@ import { IntroSequence } from "@/components/hackathon/IntroSequence";
 import { Navbar } from "@/components/hackathon/Navbar";
 import { OverviewSection } from "@/components/hackathon/OverviewSection";
 import { ProblemStatementsSection } from "@/components/hackathon/ProblemStatementsSection";
+import { FirstRoundWinnersAnnouncement } from "@/components/hackathon/FirstRoundWinnersAnnouncement";
+import {
+  RoundOneArenaSection,
+  RoundTwoArenaSection,
+} from "@/components/hackathon/RoundArenaSections";
 import { RoundsSection } from "@/components/hackathon/RoundsSection";
+import { RoundFlowProvider } from "@/context/RoundFlowContext";
 import { WhyParticipateSection } from "@/components/hackathon/WhyParticipateSection";
 import { cn } from "@/lib/cn";
 import { useCallback, useState } from "react";
@@ -34,14 +40,19 @@ const HomePage = () => {
         )}
         aria-hidden={!introComplete}
       >
-        <Navbar />
-        <HeroSection />
-        <OverviewSection />
-        <ProblemStatementsSection />
-        <RoundsSection />
-        <WhyParticipateSection />
-        <CTASection />
-        <Footer />
+        <RoundFlowProvider>
+          <Navbar />
+          <HeroSection />
+          <OverviewSection />
+          <ProblemStatementsSection />
+          <RoundsSection />
+          <RoundOneArenaSection />
+          <FirstRoundWinnersAnnouncement />
+          <RoundTwoArenaSection />
+          <WhyParticipateSection />
+          <CTASection />
+          <Footer />
+        </RoundFlowProvider>
       </div>
     </div>
   );

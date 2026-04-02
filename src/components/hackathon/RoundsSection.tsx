@@ -22,7 +22,7 @@ export function RoundsSection() {
       <SectionHeading
         eyebrow="How it works"
         title="Two rounds. One arc from spark to showcase."
-        description="Progression is designed to reward teams that iterate: first you prove the core, then you polish the story and the system."
+        description="Progression is designed to reward teams that iterate: first you prove the core, then you polish the story and the system. Below, use Start Round 1, confirm who advances, then celebrate on the winners board — only those teams unlock Round 2 and its timer."
       />
       <div className="grid gap-8 md:grid-cols-2">
         {rounds.map((r, i) => (

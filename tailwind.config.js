@@ -34,6 +34,8 @@ export default {
         shimmer: "shimmer 2s linear infinite",
         orbit: "orbit 1.4s linear infinite",
         "pulse-ring": "pulseRing 1.5s ease-out infinite",
+        marquee: "marquee 45s linear infinite",
+        "marquee-reverse": "marqueeReverse 50s linear infinite",
       },
       keyframes: {
         fadeIn: {
@@ -59,6 +61,14 @@ export default {
         pulseRing: {
           "0%": { transform: "scale(0.85)", opacity: "0.6" },
           "100%": { transform: "scale(1.4)", opacity: "0" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        marqueeReverse: {
+          "0%": { transform: "translateX(-50%)" },
+          "100%": { transform: "translateX(0)" },
         },
       },
     },

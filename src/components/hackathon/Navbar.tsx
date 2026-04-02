@@ -6,6 +6,9 @@ const links = [
   { href: "#overview", label: "Overview" },
   { href: "#problems", label: "Problems" },
   { href: "#rounds", label: "Rounds" },
+  { href: "#round-1-arena", label: "Round 1" },
+  { href: "#first-round-winners", label: "Winners" },
+  { href: "#round-2-arena", label: "Round 2" },
   { href: "#why", label: "Why join" },
 ];
 
@@ -40,12 +43,15 @@ export function Navbar() {
           <span className="sm:hidden">HACK</span>
         </a>
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
+        <nav
+          className="hidden max-w-[58%] flex-wrap items-center justify-end gap-x-0.5 gap-y-1 md:flex lg:max-w-none lg:flex-nowrap lg:gap-1"
+          aria-label="Primary"
+        >
           {links.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              className="rounded-lg px-3 py-2 text-sm text-slate-400 transition hover:bg-white/5 hover:text-white"
+              className="rounded-lg px-2 py-2 text-xs text-slate-400 transition hover:bg-white/5 hover:text-white lg:px-3 lg:text-sm"
             >
               {l.label}
             </a>

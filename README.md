@@ -25,6 +25,8 @@ Marketing and registration landing page for **HACK_IN_60** (*Where Ideas Turn In
 - `src/components/hackathon/` — Section components (hero, overview, problems, rounds, CTA, footer, intro).
 - `src/components/ui/` — Shared primitives (`Button`, `Section`, `SectionHeading`).
 - `src/pages/home/data/problems.ts` — Problem statement copy (edit titles and briefs here).
+- `src/pages/home/data/teams.ts` — Participating team names and round timer length (`ROUND_DURATION_SECONDS`).
+- `src/context/RoundFlowContext.tsx` — Round 1 / Round 2 flow: start buttons, qualification checklist, and who appears in Round 2.
 - `tailwind.config.js` — Theme tokens (colors, fonts, keyframe animations).
 - `index.html` — Document title, description, and social meta tags.
 

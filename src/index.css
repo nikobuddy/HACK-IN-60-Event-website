@@ -13,6 +13,11 @@
     html {
       scroll-behavior: auto;
     }
+
+    .animate-marquee,
+    .animate-marquee-reverse {
+      animation: none !important;
+    }
   }
 
   body {
