@@ -25,8 +25,8 @@ Marketing and registration landing page for **HACK_IN_60** (*Where Ideas Turn In
 - `src/components/hackathon/` — Section components (hero, overview, problems, rounds, CTA, footer, intro).
 - `src/components/ui/` — Shared primitives (`Button`, `Section`, `SectionHeading`).
 - `src/pages/home/data/problems.ts` — Problem statement copy (edit titles and briefs here).
-- `src/pages/home/data/teams.ts` — Participating team names and round timer length (`ROUND_DURATION_SECONDS`).
-- `src/pages/home/data/firstRoundWinners.ts` — `firstRoundWinnerRecords` (team + optional podium + shoutouts); drives qualifiers and the winners UI.
+- `src/pages/home/data/teams.ts` — Full roster (`hackathonTeams`), `qualifiedRound2` flags for Round 2 qualifiers, derived name lists, and `ROUND_DURATION_SECONDS`.
+- `src/pages/home/data/firstRoundWinners.ts` — Re-exports qualifier helpers so announcement UI can import one module; source of truth is `teams.ts`.
 - `src/context/RoundFlowContext.tsx` — Round timers, winners announcement completion, and Round 2 unlock.
 - `tailwind.config.js` — Theme tokens (colors, fonts, keyframe animations).
 - `index.html` — Document title, description, and social meta tags.
@@ -34,7 +34,7 @@ Marketing and registration landing page for **HACK_IN_60** (*Where Ideas Turn In
 ## Customizing for your event
 
 - Replace placeholder contact and social links in `src/components/hackathon/Footer.tsx`.
-- Edit `firstRoundWinners.ts` (`firstRoundWinnerRecords`) and `teams.ts` so every `teamName` exists on the main roster.
+- Edit `teams.ts`: set `qualifiedRound2: true` on teams that advance (every name stays in `hackathonTeams`).
 - Wire **Register** / **View rules** actions in `CTASection.tsx` and the hero/nav buttons to your form, PDF, or external URL.
 - Update `index.html` meta and favicon (`/vite.svg`) when branding is final.
 - Users who prefer reduced motion get a shortened intro (see `IntroSequence.tsx`).

@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/Button";
 import { useRoundFlow } from "@/context/RoundFlowContext";
 import { cn } from "@/lib/cn";
+import {
+  QUALIFIED_TEAM_BADGE,
+  round2QualifiedSet,
+} from "@/pages/home/data/teams";
 import { useMemo } from "react";
 
 function formatClock(totalSeconds: number) {
@@ -13,10 +17,12 @@ function TeamMarquee({
   teams,
   reverse,
   muted,
+  qualifiedNames,
 }: {
   teams: string[];
   reverse?: boolean;
   muted?: boolean;
+  qualifiedNames?: Set<string>;
 }) {
   if (teams.length === 0) {
     return (
@@ -42,14 +48,22 @@ function TeamMarquee({
           reverse ? "animate-marquee-reverse" : "animate-marquee"
         )}
       >
-        {loop.map((name, i) => (
-          <span
-            key={`${name}-${i}`}
-            className="shrink-0 whitespace-nowrap rounded-full border border-white/10 bg-white/[0.06] px-5 py-2 text-sm font-semibold tracking-wide text-slate-200 ring-1 ring-white/[0.04]"
-          >
-            {name}
-          </span>
-        ))}
+        {loop.map((name, i) => {
+          const winner = qualifiedNames?.has(name);
+          return (
+            <span
+              key={`${name}-${i}`}
+              className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-white/[0.06] py-2 pl-4 pr-4 text-sm font-semibold tracking-wide text-slate-200 ring-1 ring-white/[0.04] sm:pl-5 sm:pr-5"
+            >
+              <span>{name}</span>
+              {winner ? (
+                <span className="rounded-full border border-amber-400/35 bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-200/95">
+                  {QUALIFIED_TEAM_BADGE}
+                </span>
+              ) : null}
+            </span>
+          );
+        })}
       </div>
     </div>
   );
@@ -59,10 +73,12 @@ function TeamNameCard({
   name,
   accent,
   align,
+  showWinnerTag,
 }: {
   name: string;
   accent: "cyan" | "violet";
   align: "left" | "right";
+  showWinnerTag?: boolean;
 }) {
   const ring =
     accent === "cyan"
@@ -73,13 +89,18 @@ function TeamNameCard({
   return (
     <span
       className={cn(
-        "block w-full max-w-full rounded-xl border px-4 py-2.5 text-left text-sm font-medium leading-snug text-slate-100 transition duration-300 sm:text-[15px] sm:leading-normal",
+        "flex w-full max-w-full items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium leading-snug text-slate-100 transition duration-300 sm:text-[15px] sm:leading-normal",
         surface,
         ring,
-        align === "right" && "text-right"
+        align === "right" && "flex-row-reverse text-right"
       )}
     >
-      {name}
+      <span className="min-w-0 flex-1 break-words">{name}</span>
+      {showWinnerTag ? (
+        <span className="shrink-0 rounded-full border border-amber-400/35 bg-amber-500/12 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-200/90">
+          {QUALIFIED_TEAM_BADGE}
+        </span>
+      ) : null}
     </span>
   );
 }
@@ -88,10 +109,12 @@ function TeamColumn({
   teams,
   align,
   accent,
+  qualifiedNames,
 }: {
   teams: string[];
   align: "left" | "right";
   accent: "cyan" | "violet";
+  qualifiedNames?: Set<string>;
 }) {
   if (teams.length === 0) {
     return <p className="text-sm text-slate-500">—</p>;
@@ -105,7 +128,12 @@ function TeamColumn({
     >
       {teams.map((name) => (
         <li key={name} className="min-w-0 w-full max-w-full">
-          <TeamNameCard name={name} accent={accent} align={align} />
+          <TeamNameCard
+            name={name}
+            accent={accent}
+            align={align}
+            showWinnerTag={qualifiedNames?.has(name)}
+          />
         </li>
       ))}
     </ul>
@@ -116,10 +144,12 @@ function TeamRosterGrid({
   teams,
   accent,
   ariaLabel,
+  qualifiedNames,
 }: {
   teams: string[];
   accent: "cyan" | "violet";
   ariaLabel: string;
+  qualifiedNames?: Set<string>;
 }) {
   if (teams.length === 0) return null;
   return (
@@ -133,7 +163,12 @@ function TeamRosterGrid({
       >
         {teams.map((name) => (
           <li key={name} className="min-w-0">
-            <TeamNameCard name={name} accent={accent} align="left" />
+            <TeamNameCard
+              name={name}
+              accent={accent}
+              align="left"
+              showWinnerTag={qualifiedNames?.has(name)}
+            />
           </li>
         ))}
       </ul>
@@ -170,7 +205,7 @@ export function RoundOneArenaSection() {
       id="round-1-arena"
       className="relative scroll-mt-24 border-t border-white/[0.06] bg-hack-deep/60"
     >
-      <TeamMarquee teams={allTeams} />
+      <TeamMarquee teams={allTeams} qualifiedNames={round2QualifiedSet} />
 
       <div className="relative">
         <div
@@ -188,9 +223,9 @@ export function RoundOneArenaSection() {
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-slate-400 sm:text-base">
               All registered teams compete here first. When time ends, use the
-              winners board to announce who advances (see{" "}
+              winners board to announce who advances (qualifiers are marked in{" "}
               <code className="rounded bg-white/10 px-1.5 py-0.5 text-xs text-cyan-200/90">
-                firstRoundWinners.ts
+                teams.ts
               </code>
               ).
             </p>
@@ -201,7 +236,12 @@ export function RoundOneArenaSection() {
               <p className="mb-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
                 Teams — side A
               </p>
-              <TeamColumn teams={leftTeams} align="left" accent="cyan" />
+              <TeamColumn
+                teams={leftTeams}
+                align="left"
+                accent="cyan"
+                qualifiedNames={round2QualifiedSet}
+              />
             </div>
 
             <div className="flex min-w-0 flex-col items-center justify-center">
@@ -289,6 +329,7 @@ export function RoundOneArenaSection() {
                   teams={allTeams}
                   accent="cyan"
                   ariaLabel="All teams in Round 1"
+                  qualifiedNames={round2QualifiedSet}
                 />
               </div>
             </div>
@@ -297,14 +338,19 @@ export function RoundOneArenaSection() {
               <p className="mb-3 text-right text-[10px] font-semibold uppercase tracking-wider text-slate-500">
                 Teams — side B
               </p>
-              <TeamColumn teams={rightTeams} align="right" accent="cyan" />
+              <TeamColumn
+                teams={rightTeams}
+                align="right"
+                accent="cyan"
+                qualifiedNames={round2QualifiedSet}
+              />
             </div>
           </div>
 
         </div>
       </div>
 
-      <TeamMarquee teams={allTeams} reverse />
+      <TeamMarquee teams={allTeams} reverse qualifiedNames={round2QualifiedSet} />
     </section>
   );
 }

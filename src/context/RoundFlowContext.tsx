@@ -1,7 +1,7 @@
-import { firstRoundQualifiedTeamNames } from "@/pages/home/data/firstRoundWinners";
 import {
   participatingTeams,
   ROUND_DURATION_SECONDS,
+  round2QualifiedTeamNames,
 } from "@/pages/home/data/teams";
 import {
   createContext,
@@ -25,7 +25,7 @@ type RoundFlowValue = {
   startRound1: () => void;
   qualifiedTeams: string[];
   qualificationConfirmed: boolean;
-  /** Call after the winners announcement animation finishes — loads qualifiers from `firstRoundWinners.ts` and unlocks Round 2. */
+  /** Call after the winners announcement animation finishes — loads qualifiers from `teams.ts` and unlocks Round 2. */
   completeWinnersAnnouncement: () => void;
   round2Phase: Round2Phase;
   round2Remaining: number;
@@ -68,7 +68,7 @@ export function RoundFlowProvider({ children }: { children: ReactNode }) {
   const completeWinnersAnnouncement = useCallback(() => {
     if (winnersAnnouncedRef.current) return;
     winnersAnnouncedRef.current = true;
-    setQualifiedTeams([...firstRoundQualifiedTeamNames]);
+    setQualifiedTeams([...round2QualifiedTeamNames]);
     setQualificationConfirmed(true);
     setRound2Phase("ready");
   }, []);

@@ -4,7 +4,10 @@ import {
   firstRoundQualifiedTeamNames,
   isFirstRoundQualified,
 } from "@/pages/home/data/firstRoundWinners";
-import { participatingTeams } from "@/pages/home/data/teams";
+import {
+  participatingTeams,
+  QUALIFIED_TEAM_BADGE,
+} from "@/pages/home/data/teams";
 import { cn } from "@/lib/cn";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -284,9 +287,16 @@ export function FirstRoundWinnersAnnouncement() {
                           "animate-winner-pulse ring-2 ring-amber-400/45"
                       )}
                     >
-                      <p className="break-words text-center font-display text-base font-semibold text-white sm:text-lg">
-                        {name}
-                      </p>
+                      <div className="flex flex-col items-center gap-2 text-center">
+                        {qualified && (lineupOnly || phase === "eliminating") ? (
+                          <span className="rounded-full border border-amber-400/40 bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-200/95">
+                            {QUALIFIED_TEAM_BADGE}
+                          </span>
+                        ) : null}
+                        <p className="break-words font-display text-base font-semibold text-white sm:text-lg">
+                          {name}
+                        </p>
+                      </div>
                     </div>
                   </li>
                 );
@@ -343,7 +353,10 @@ export function FirstRoundWinnersAnnouncement() {
                       className="animate-fade-in-up opacity-0 [animation-fill-mode:forwards]"
                       style={{ animationDelay: `${60 + i * 55}ms` }}
                     >
-                      <div className="flex min-h-[4.5rem] items-center justify-center rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-500/[0.1] to-white/[0.03] px-4 py-4 backdrop-blur-md sm:min-h-[5rem]">
+                      <div className="flex min-h-[4.5rem] flex-col items-center justify-center gap-2 rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-500/[0.1] to-white/[0.03] px-4 py-4 backdrop-blur-md sm:min-h-[5rem]">
+                        <span className="rounded-full border border-amber-400/35 bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-200/95">
+                          {QUALIFIED_TEAM_BADGE}
+                        </span>
                         <p className="break-words text-center font-display text-lg font-semibold text-white sm:text-xl">
                           {name}
                         </p>
@@ -357,8 +370,11 @@ export function FirstRoundWinnersAnnouncement() {
                     {qualifiedTeams.map((name) => (
                       <span
                         key={name}
-                        className="rounded-full border border-amber-400/25 bg-amber-500/10 px-4 py-2 text-sm font-semibold text-amber-100"
+                        className="inline-flex items-center gap-2 rounded-full border border-amber-400/25 bg-amber-500/10 py-2 pl-3 pr-4 text-sm font-semibold text-amber-100"
                       >
+                        <span className="rounded-full border border-amber-400/30 bg-amber-500/20 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-200/90">
+                          {QUALIFIED_TEAM_BADGE}
+                        </span>
                         {name}
                       </span>
                     ))}
