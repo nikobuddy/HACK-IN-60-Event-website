@@ -1,3 +1,4 @@
+import { firstRoundQualifiedTeamNames } from "@/pages/home/data/firstRoundWinners";
 import {
   participatingTeams,
   ROUND_DURATION_SECONDS,
@@ -22,15 +23,10 @@ type RoundFlowValue = {
   round1Remaining: number;
   round1Duration: number;
   startRound1: () => void;
-  showQualification: boolean;
-  qualificationDraft: Record<string, boolean>;
-  toggleQualification: (teamName: string) => void;
-  selectAllQualifiers: () => void;
-  clearQualifiers: () => void;
-  confirmQualification: () => void;
-  selectedQualifierCount: number;
   qualifiedTeams: string[];
   qualificationConfirmed: boolean;
+  /** Call after the winners announcement animation finishes — loads qualifiers from `firstRoundWinners.ts` and unlocks Round 2. */
+  completeWinnersAnnouncement: () => void;
   round2Phase: Round2Phase;
   round2Remaining: number;
   round2Duration: number;
@@ -42,21 +38,12 @@ const RoundFlowContext = createContext<RoundFlowValue | null>(null);
 export function RoundFlowProvider({ children }: { children: ReactNode }) {
   const [round1Phase, setRound1Phase] = useState<Round1Phase>("idle");
   const [round1Remaining, setRound1Remaining] = useState(ROUND_DURATION_SECONDS);
-  const [qualificationDraft, setQualificationDraft] = useState<
-    Record<string, boolean>
-  >({});
   const [qualificationConfirmed, setQualificationConfirmed] = useState(false);
   const [qualifiedTeams, setQualifiedTeams] = useState<string[]>([]);
   const [round2Phase, setRound2Phase] = useState<Round2Phase>("locked");
   const [round2Remaining, setRound2Remaining] = useState(ROUND_DURATION_SECONDS);
 
-  const qualificationOpenedRef = useRef(false);
-
-  const initDraftAllSelected = useCallback(() => {
-    const next: Record<string, boolean> = {};
-    for (const t of participatingTeams) next[t] = true;
-    setQualificationDraft(next);
-  }, []);
+  const winnersAnnouncedRef = useRef(false);
 
   const startRound1 = useCallback(() => {
     if (round1Phase !== "idle") return;
@@ -78,34 +65,13 @@ export function RoundFlowProvider({ children }: { children: ReactNode }) {
     return () => window.clearInterval(id);
   }, [round1Phase]);
 
-  useEffect(() => {
-    if (round1Phase !== "completed" || qualificationConfirmed) return;
-    if (qualificationOpenedRef.current) return;
-    qualificationOpenedRef.current = true;
-    initDraftAllSelected();
-  }, [round1Phase, qualificationConfirmed, initDraftAllSelected]);
-
-  const toggleQualification = useCallback((teamName: string) => {
-    setQualificationDraft((d) => ({ ...d, [teamName]: !d[teamName] }));
-  }, []);
-
-  const selectAllQualifiers = useCallback(() => {
-    initDraftAllSelected();
-  }, [initDraftAllSelected]);
-
-  const clearQualifiers = useCallback(() => {
-    const next: Record<string, boolean> = {};
-    for (const t of participatingTeams) next[t] = false;
-    setQualificationDraft(next);
-  }, []);
-
-  const confirmQualification = useCallback(() => {
-    const selected = participatingTeams.filter((t) => qualificationDraft[t]);
-    if (selected.length === 0) return;
-    setQualifiedTeams(selected);
+  const completeWinnersAnnouncement = useCallback(() => {
+    if (winnersAnnouncedRef.current) return;
+    winnersAnnouncedRef.current = true;
+    setQualifiedTeams([...firstRoundQualifiedTeamNames]);
     setQualificationConfirmed(true);
     setRound2Phase("ready");
-  }, [qualificationDraft]);
+  }, []);
 
   const startRound2 = useCallback(() => {
     if (round2Phase !== "ready") return;
@@ -127,10 +93,6 @@ export function RoundFlowProvider({ children }: { children: ReactNode }) {
     return () => window.clearInterval(id);
   }, [round2Phase]);
 
-  const selectedQualifierCount = participatingTeams.filter(
-    (t) => qualificationDraft[t]
-  ).length;
-
   const value = useMemo(
     (): RoundFlowValue => ({
       allTeams: participatingTeams,
@@ -138,15 +100,9 @@ export function RoundFlowProvider({ children }: { children: ReactNode }) {
       round1Remaining,
       round1Duration: ROUND_DURATION_SECONDS,
       startRound1,
-      showQualification: round1Phase === "completed" && !qualificationConfirmed,
-      qualificationDraft,
-      toggleQualification,
-      selectAllQualifiers,
-      clearQualifiers,
-      confirmQualification,
-      selectedQualifierCount,
       qualifiedTeams,
       qualificationConfirmed,
+      completeWinnersAnnouncement,
       round2Phase,
       round2Remaining,
       round2Duration: ROUND_DURATION_SECONDS,
@@ -156,14 +112,9 @@ export function RoundFlowProvider({ children }: { children: ReactNode }) {
       round1Phase,
       round1Remaining,
       startRound1,
-      qualificationDraft,
-      toggleQualification,
-      selectAllQualifiers,
-      clearQualifiers,
-      confirmQualification,
-      selectedQualifierCount,
       qualifiedTeams,
       qualificationConfirmed,
+      completeWinnersAnnouncement,
       round2Phase,
       round2Remaining,
       startRound2,

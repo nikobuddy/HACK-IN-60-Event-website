@@ -18,6 +18,16 @@
     .animate-marquee-reverse {
       animation: none !important;
     }
+
+    .animate-winner-drop {
+      animation: none !important;
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+
+    .animate-winner-pulse {
+      animation: none !important;
+    }
   }
 
   body {

@@ -141,94 +141,6 @@ function TeamRosterGrid({
   );
 }
 
-function QualificationPanel() {
-  const {
-    allTeams,
-    showQualification,
-    qualificationDraft,
-    toggleQualification,
-    selectAllQualifiers,
-    clearQualifiers,
-    confirmQualification,
-    selectedQualifierCount,
-  } = useRoundFlow();
-
-  if (!showQualification) return null;
-
-  return (
-    <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-cyan-400/20 bg-gradient-to-b from-cyan-500/[0.08] to-white/[0.03] p-6 shadow-glow backdrop-blur-xl md:p-8">
-      <h3 className="font-display text-xl font-bold text-white md:text-2xl">
-        Select teams advancing to Round 2
-      </h3>
-      <p className="mt-2 text-sm text-slate-400">
-        Only checked teams will appear in the Round 2 arena and may start the
-        enhancement timer. Uncheck anyone who did not qualify from Round 1.
-      </p>
-      <div className="mt-6 flex flex-wrap gap-2">
-        <Button
-          type="button"
-          variant="secondary"
-          className="px-4 py-2 text-xs"
-          onClick={selectAllQualifiers}
-        >
-          Select all
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          className="px-4 py-2 text-xs"
-          onClick={clearQualifiers}
-        >
-          Clear all
-        </Button>
-      </div>
-      <ul className="mt-6 grid max-h-[min(48vh,420px)] grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2">
-        {allTeams.map((name) => {
-          const checked = Boolean(qualificationDraft[name]);
-          return (
-            <li key={name}>
-              <label className="flex min-w-0 cursor-pointer items-start gap-3 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 transition hover:border-cyan-400/25 hover:bg-white/[0.06] sm:items-center">
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={() => toggleQualification(name)}
-                  className="mt-0.5 h-4 w-4 shrink-0 rounded border-white/20 bg-hack-deep text-cyan-500 focus:ring-cyan-400/50 sm:mt-0"
-                />
-                <span className="min-w-0 flex-1 break-words text-sm font-medium leading-snug text-slate-200">
-                  {name}
-                </span>
-              </label>
-            </li>
-          );
-        })}
-      </ul>
-      <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-slate-400">
-          <span className="font-semibold text-cyan-200">
-            {selectedQualifierCount}
-          </span>{" "}
-          team{selectedQualifierCount === 1 ? "" : "s"} selected
-        </p>
-        <Button
-          type="button"
-          className="sm:min-w-[240px]"
-          disabled={selectedQualifierCount === 0}
-          onClick={() => {
-            confirmQualification();
-            window.requestAnimationFrame(() => {
-              document
-                .getElementById("first-round-winners")
-                ?.scrollIntoView({ behavior: "smooth", block: "start" });
-            });
-          }}
-        >
-          Confirm & unlock Round 2
-        </Button>
-      </div>
-    </div>
-  );
-}
-
 export function RoundOneArenaSection() {
   const {
     allTeams,
@@ -237,7 +149,6 @@ export function RoundOneArenaSection() {
     round1Duration,
     startRound1,
     qualificationConfirmed,
-    qualifiedTeams,
   } = useRoundFlow();
 
   const mid = Math.ceil(allTeams.length / 2);
@@ -251,7 +162,7 @@ export function RoundOneArenaSection() {
   const timerHint = useMemo(() => {
     if (round1Phase === "idle") return "Press start to begin the 60:00 build window";
     if (round1Phase === "running") return "Live — prototype round in progress";
-    return "Round complete — confirm qualifiers below";
+    return "Round complete — head to the winners board to announce results";
   }, [round1Phase]);
 
   return (
@@ -276,8 +187,12 @@ export function RoundOneArenaSection() {
               Build window — 60 minutes
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-slate-400 sm:text-base">
-              All registered teams compete here first. Start the round when you
-              are ready; when time ends, choose who advances to Round 2.
+              All registered teams compete here first. When time ends, use the
+              winners board to announce who advances (see{" "}
+              <code className="rounded bg-white/10 px-1.5 py-0.5 text-xs text-cyan-200/90">
+                firstRoundWinners.ts
+              </code>
+              ).
             </p>
           </div>
 
@@ -352,13 +267,20 @@ export function RoundOneArenaSection() {
                 </div>
               </div>
 
+              {round1Phase === "completed" && !qualificationConfirmed ? (
+                <p className="mt-6 max-w-md text-center text-sm text-cyan-200/90">
+                  <a
+                    href="#first-round-winners"
+                    className="font-semibold text-white underline decoration-cyan-400/50 underline-offset-2 hover:text-cyan-100"
+                  >
+                    Open the first round winners board
+                  </a>{" "}
+                  to run the announcement and unlock Round 2.
+                </p>
+              ) : null}
               {qualificationConfirmed ? (
-                <p className="mt-6 text-center text-sm text-cyan-200/90">
-                  <span className="font-semibold text-white">
-                    {qualifiedTeams.length}
-                  </span>{" "}
-                  team{qualifiedTeams.length === 1 ? "" : "s"} qualified for
-                  Round 2
+                <p className="mt-6 text-center text-sm font-medium text-emerald-400/90">
+                  Winners announced — Round 2 is unlocked below.
                 </p>
               ) : null}
 
@@ -379,7 +301,6 @@ export function RoundOneArenaSection() {
             </div>
           </div>
 
-          <QualificationPanel />
         </div>
       </div>
 
@@ -445,8 +366,8 @@ export function RoundTwoArenaSection() {
                   Qualifiers only after Round 1
                 </p>
                 <p className="mt-2 text-sm text-slate-400">
-                  Finish Round 1, then use the checklist to confirm which teams
-                  advance. Only those teams will appear here.
+                  Finish Round 1, run the winners announcement, then only
+                  qualified teams (from your data file) appear here.
                 </p>
               </div>
             </div>
@@ -461,8 +382,26 @@ export function RoundTwoArenaSection() {
                 Polish & pitch — 60 minutes
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-sm text-slate-400 sm:text-base">
-                Qualified teams from Round 1 only. Marquees and side rosters
-                update to match your selection.
+                {round2Phase === "running" ? (
+                  <>
+                    <span className="font-medium text-violet-200/90">
+                      Timer running
+                    </span>
+                    {" — "}marquees, columns, and mobile grid show{" "}
+                    <span className="tabular-nums text-white">
+                      {qualifiedTeams.length}
+                    </span>{" "}
+                    qualifiers only. No other teams appear here.
+                  </>
+                ) : (
+                  <>
+                    Only Round 1 qualifiers appear here (
+                    <span className="tabular-nums text-violet-200/90">
+                      {qualifiedTeams.length}
+                    </span>{" "}
+                    teams). Start the countdown when you are ready.
+                  </>
+                )}
               </p>
             </div>
 

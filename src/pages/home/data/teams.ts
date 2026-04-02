@@ -1,4 +1,7 @@
-/** Static roster — replace or extend with your real participating teams. */
+/**
+ * Full Round 1 roster. Who advances is defined in `./firstRoundWinners.ts`
+ * (`firstRoundWinnerRecords` in `firstRoundWinners.ts`) — names must match here.
+ */
 export const participatingTeams: string[] = [
   "CodeCrafters",
   "Binary Brains",

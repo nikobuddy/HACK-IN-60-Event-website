@@ -36,6 +36,8 @@ export default {
         "pulse-ring": "pulseRing 1.5s ease-out infinite",
         marquee: "marquee 45s linear infinite",
         "marquee-reverse": "marqueeReverse 50s linear infinite",
+        "winner-drop": "winnerDrop 0.85s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards",
+        "winner-pulse": "winnerPulse 1.25s ease-in-out infinite",
       },
       keyframes: {
         fadeIn: {
@@ -69,6 +71,20 @@ export default {
         marqueeReverse: {
           "0%": { transform: "translateX(-50%)" },
           "100%": { transform: "translateX(0)" },
+        },
+        winnerDrop: {
+          "0%": {
+            opacity: "1",
+            transform: "translateY(0) scale(1) rotate(0deg)",
+          },
+          "100%": {
+            opacity: "0",
+            transform: "translateY(130%) scale(0.88) rotate(4deg)",
+          },
+        },
+        winnerPulse: {
+          "0%, 100%": { boxShadow: "0 0 0 0 rgba(251, 191, 36, 0.35)" },
+          "50%": { boxShadow: "0 0 28px 4px rgba(251, 191, 36, 0.2)" },
         },
       },
     },
